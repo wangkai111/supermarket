@@ -16,9 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^user/', include('user.urls',namespace="user")),
-    url(r'^shop/', include('shop.urls',namespace="shop")),
+    url(r'^user/', include('user.urls', namespace="user")),  # 用户模块
+    url(r'^shop/', include('shop.urls', namespace="shop")),  # 商城模块
+    url(r'^car/', include('car.urls', namespace="car")),  # 购物车模块
+    url(r'^order/', include('order.urls', namespace="order")),  # 订单模块
 ]

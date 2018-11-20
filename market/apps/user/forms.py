@@ -33,7 +33,6 @@ class RegForm(forms.Form):
     password = forms.CharField(max_length=32,
                                error_messages={
                                    "required": "密码不能为空",
-
                                },
                                validators=[
                                    RegexValidator(r'^\d{6}$', "密码必须是6位数字")

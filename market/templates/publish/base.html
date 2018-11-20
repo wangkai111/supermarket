@@ -11,8 +11,16 @@
     <meta name="renderer" content="webkit">
     <link href="{% static 'css/amazeui.min.css' %}" rel="stylesheet" type="text/css"/>
     <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/check.css' %}" rel="stylesheet" type="text/css" />
     <script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
     <script src="{% static 'js/time.js' %}"></script>
+    {% block head_js %}
+
+    {% endblock %}
+
+    {% block style %}
+
+    {% endblock %}
 </head>
 <body>
 

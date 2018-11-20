@@ -6,19 +6,19 @@
 {% block content %}
     <header data-am-widget="header" class="am-header am-header-default sq-head1">
         <div class="am-header-left am-header-nav">
-            <a href="city.html" class="" style="color: #fff;">
+            <a href="{% url 'shop:所在城市' %}" class="" style="color: #fff;">
                 <img src="{% static 'images/city.png' %}"/>
                 <p style="font-size: 12px; margin-top: -35px;">南昌</p>
             </a>
         </div>
         <h1 class="am-header-title1">
             <div class="search-box">
-                <a href="village.html" class="index-search">南昌大学前湖校区∨</a>
+                <a href="{% url 'shop:所在学校' %}" class="index-search">南昌大学前湖校区∨</a>
                 <!--  <input type="submit" value="" class="search-icon" /> -->
             </div>
         </h1>
         <div class="am-header-right am-header-nav">
-            <a href="tidings.html" class="">
+            <a href="{% url 'shop:消息中心' %}" class="">
                 <div class="messgae"><span>10</span></div>
             </a>
         </div>
@@ -35,7 +35,7 @@
     <ul class="sq-nav">
         <li>
             <div class="am-gallery-item">
-                <a href="recharge.html" class="">
+                <a href="{% url 'shop:充值' %}" class="">
                     <img src="{% static 'images/icon.png' %}"/>
                     <p>充值</p>
                 </a>
@@ -51,7 +51,7 @@
         </li>
         <li>
             <div class="am-gallery-item">
-                <a href="yhq.html" class="">
+                <a href="{% url 'shop:我的红包' %}" class="">
                     <img src="{% static 'images/icon2.png' %}"/>
                     <p>红包</p>
                 </a>
@@ -69,7 +69,7 @@
     <ul class="sq-nav1">
         <li>
             <div class="am-gallery-item">
-                <a href="speed.html" class="">
+                <a href="{% url 'shop:零食飞速' %}" class="">
                     <img src="{% static 'images/icon4.png' %}"/>
                     <p>零食飞速</p>
                 </a>
@@ -77,7 +77,7 @@
         </li>
         <li>
             <div class="am-gallery-item">
-                <a href="category.html" class="">
+                <a href="{% url 'shop:超市' %}" class="">
                     <img src="{% static 'images/icon5.png' %}"/>
                     <p>超市</p>
                 </a>
@@ -202,7 +202,7 @@
     <div data-am-widget="navbar" class="am-navbar am-cf am-navbar-default sq-foot am-no-layout" id="">
     <ul class="am-navbar-nav am-cf am-avg-sm-5">
         <li>
-            <a href="index.html" class="curr">
+            <a href="{% url 'shop:商城主页' %}" class="curr">
                 <span class="am-icon-home"></span>
                 <span class="am-navbar-label">首页</span>
             </a>
@@ -227,7 +227,7 @@
         </li>
 
         <li>
-            <a href="member.html" class="">
+            <a href="{% url 'user:个人中心' %}" class="">
                 <span class="am-icon-user"></span>
                 <span class="am-navbar-label">我的</span>
             </a>

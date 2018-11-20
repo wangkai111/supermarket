@@ -11,9 +11,12 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# 将apps 加入到包路径查找列表中
+sys.path.insert(0,os.path.join(BASE_DIR,"apps"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -24,7 +27,7 @@ SECRET_KEY = '&ba#c5bldpq*zse$7o-)fq#u%ab55&!8-m&49u&b!4qk524f8a'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -35,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user.apps.UserConfig',
-    'shop.apps.ShopConfig',
+    'user.apps.UserConfig', # 用户模块
+    'shop.apps.ShopConfig', # 商城模块
+    'car.apps.CarConfig',   # 购物车模块
+    'order.apps.OrderConfig', # 订单模块
 ]
 
 MIDDLEWARE = [

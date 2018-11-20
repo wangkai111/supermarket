@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
+from django.views import View
 
 from user.forms import RegForm
+from user.help import set_password
 from user.models import User
-import hashlib
 
 
 def login(request):  # 登录界面
@@ -12,18 +13,16 @@ def login(request):  # 登录界面
         password = request.POST.get("password")
 
         # 通过表单中的手机号获取数据库中的手机号
-        user = User.objects.filter(telephone=telephone)
-        for v in user:
-            print()
+        # 首先获取的是一条集合,再通过集合.first()  可得到里面一条对象
+        user = User.objects.filter(telephone=telephone).first()
         # 验证
         # 判断表单手机号是否在数据库中
         if user:
-            # 获取数据库密码
-            user_password = v.password
+            # 获取数据库密码(对象.属性名)
+            user_password = user.password
 
             # form表单中获取的密码加密
-            h = hashlib.md5(password.encode("utf-8"))
-            password = h.hexdigest()
+            password = set_password(password)
 
             # 验证表单的密码是否和数据库的密码一致
             if user_password == password:
@@ -33,9 +32,9 @@ def login(request):  # 登录界面
                 return redirect("shop:商城主页")
             else:
                 context = {
-                    "a":"用户名或者密码错误"
+                    "a": "用户名或者密码错误"
                 }
-                return render(request, "user/login.html",context)
+                return render(request, "user/login.html", context)
         else:
             context = {
                 "a": "请输入用户名和密码"
@@ -68,8 +67,7 @@ def reg(request):  # 注册界面
                     # 获取表单密码
                     password = aa.get("password")
                     # 密码加密成哈希
-                    h = hashlib.md5(password.encode("utf-8"))
-                    password = h.hexdigest()
+                    password = set_password(password)
                     # 将手机号和加密后的密码创建到数据库
                     User.objects.create(telephone=aa.get("telephone"), password=password)
                     # 跳转到登录界面
@@ -83,9 +81,9 @@ def reg(request):  # 注册界面
                     return render(request, "user/reg.html", context)
         else:
             context = {
-                "c":"请同意用户协议"
+                "c": "请同意用户协议"
             }
-            return render(request,"user/reg.html",context)
+            return render(request, "user/reg.html", context)
 
     else:
         return render(request, "user/reg.html")
@@ -93,3 +91,11 @@ def reg(request):  # 注册界面
 
 def forgetpassword(request):  # 忘记密码界面
     return render(request, "user/forgetpassword.html")
+
+
+class MemberView(View):
+    def get(self, request):
+        return render(request, 'user/member.html')
+
+    def post(self, request):
+        pass

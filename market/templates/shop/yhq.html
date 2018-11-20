@@ -1,0 +1,73 @@
+{% extends 'publish/base.html' %}
+
+
+{% block content %}
+    <header data-am-widget="header" class="am-header am-header-default sq-head ">
+        <div class="am-header-left am-header-nav">
+            <a href="javascript:history.back()" class="">
+                <i class="am-icon-chevron-left"></i>
+            </a>
+        </div>
+        <h1 class="am-header-title">
+            <a href="" class="">我的红包</a>
+        </h1>
+    </header>
+    <div style="height: 49px;"></div>
+    <div class="whitebar">
+        <div data-am-widget="tabs" class="am-tabs am-tabs-d2">
+            <ul class="am-tabs-nav am-cf" style="position: fixed; top: 49px;">
+                <li class="am-active"><a href="{% url 'shop:我的红包' %}">可使用</a></li>
+                <li class=""><a href="">已使用</a></li>
+                <li class=""><a href="{% url 'shop:过期红包' %}">已过期</a></li>
+            </ul>
+            <div style="height: 49px;"></div>
+        </div>
+    </div>
+    <ul class="yhq">
+        <li class="yhq-pic">
+            <a href="">
+                <div class="price">
+                    <span>￥3.9</span>
+                    <p>订单满￥20.0可用</p>
+                </div>
+                <div class="text">
+                    <p class="info">购物满20减3.9</p>
+                    <p style="font-size: 1.2rem; color: #807f80;">（仅限超市使用）</p>
+                    <p class="user">全国（使用地区）</p>
+                    <p class="time">2016-01-01—2016-01-31</p>
+                </div>
+            </a>
+        </li>
+        <li class="yhq-pic">
+            <a href="">
+                <div class="price">
+                    <span>￥3.9</span>
+                    <p>订单满￥20.0可用</p>
+                </div>
+                <div class="text">
+                    <p class="info">购物满20减3.9</p>
+                    <p style="font-size: 1.2rem; color: #807f80;">（仅限超市使用）</p>
+                    <p class="user">全国（使用地区）</p>
+                    <p class="time">2016-01-01—2016-01-31</p>
+                </div>
+            </a>
+        </li>
+        <li class="yhq-pic">
+            <a href="">
+                <div class="price">
+                    <span>￥3.9</span>
+                    <p>订单满￥20.0可用</p>
+                </div>
+                <div class="text">
+                    <p class="info">购物满20减3.9</p>
+                    <p style="font-size: 1.2rem; color: #807f80;">（仅限超市使用）</p>
+                    <p class="user">全国（使用地区）</p>
+                    <p class="time">2016-01-01—2016-01-31</p>
+                </div>
+            </a>
+        </li>
+    </ul>
+{% endblock %}
+
+
+
