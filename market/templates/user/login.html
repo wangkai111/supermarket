@@ -22,7 +22,7 @@
         <input type="text" name="telephone" value="{{ request.POST.telephone }}" id="mobile" placeholder="请输入用户名/手机号" class="login-name">
         <input type="password" name="password" id="password" placeholder="请输入密码" class="login-password">
         <input type="submit" name="denglu" class="login-btn" value="我要登录">
-        <p class="text-danger">{{ a }}</p>
+        <p class="am-text-danger">{{ a }}</p>
     </form>
     <div class="agree">
         <a href="{% url 'user:注册' %}">免费注册</a>

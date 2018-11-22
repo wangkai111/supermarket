@@ -21,24 +21,77 @@
     <form action="" method="post">
         {% csrf_token %}
         <input type="text" name="telephone" placeholder="请输入手机号" class="login-name">
-        <p class="text-danger">{{ errors.telephone.0 }}</p>
-        <p class="text-danger">{{ a }}</p>
+        <p class="am-text-danger">{{ errors.telephone.0 }}</p>
+        <p class="am-text-danger">{{ a }}</p>
         <input type="password" name="password" placeholder="请输入密码" class="login-password">
-        <p class="text-danger">{{ errors.password.0 }}</p>
+        <p class="am-text-danger">{{ errors.password.0 }}</p>
         <input type="password" name="rpassword" placeholder="确认密码" class="login-name">
-        <p class="text-danger">{{ errors.rpassword.0 }}</p>
-{#        <div class="yzm" style="margin-top: 1.5rem;">#}
-{#            <input type="text" class="reg-yzm" placeholder="输入验证码"/>#}
-{#            <input type="button" class="yzm-hq" value="获取验证码"/>#}
-{#        </div>#}
+        <p class="am-text-danger">{{ errors.rpassword.0 }}</p>
+        <div class="yzm" style="margin-top: 1.5rem;">
+            <input type="text" class="reg-yzm" placeholder="输入验证码"/>
+            <input type="button" name="yzm" class="yzm-hq" value="获取验证码"/>
+        </div>
+        <p class="am-text-danger">{{ c }}</p>
         <input type="submit" class="login-btn" value="立即注册">
-        <p class="text-danger">{{ c }}</p>
+        <p class="am-text-danger">{{ c }}</p>
         <div class="agree">
             <input type="checkbox" name="checkbox" value="同意" >&nbsp;同意
             <a href="" class="xy">《用户协议》</a>
             <div class="r-login">已有账号，请<a href="{% url 'user:登录' %}" class="l-login">登录</a></div>
         </div>
     </form>
+{% endblock %}
 
+
+{% block foot_js %}
+    <script>
+        $(function () {
+            $(".yzm-hq").on("click",function () {
+                // 打印,看是否绑定成功
+                // console.debug(111);
+                var that = this;
+                // 获取到手机号
+                var telephone = $("input[name='telephone']").val();
+                // 发送ajax请求
+                $.ajax({
+                    type:"POST",
+                    url:"{% url 'user:获取验证码' %}",
+                    data:{'telephone':telephone,"csrfmiddlewaretoken":"{{ csrf_token }}"},
+                    dataType:"json",
+                    success:function (data) {
+                         // console.debug(data);
+                        if(data.ok == 0){
+                            // 发送成功,开始倒计时
+                            // 设置60秒后才能重新发送验证码
+                            var time = 60;
+                            // 点击发送后,立刻将按钮禁用,防止重复一直点击提交
+                            $(that).attr("disabled","disabled");
+                            // 点击后,应该让改图标变成灰色
+                            $(that).css({'background':'gray'});
+                            // 设置周期性执行,周期性改变显示文字内容
+                            var timer = window.setInterval(function () {
+                                // 时间减少
+                                --time;
+                                // 显示文字
+                                var msg = time + "秒后重新发送!";
+                                $(that).val(msg);
+                                // 判断time是否到0
+                                if(time == 0){
+                                    // 颜色变回之前
+                                    $(that).css({'background':'#76bb2a'});
+                                    // 删除原来绑定的不可点击的属性
+                                    $(that).removeAttr("disabled");
+                                    // 变回原来文字
+                                    $(that).val("获取验证码");
+                                    // 停止时间再继续往下走,清除设置的时间变量
+                                    window.clearInterval(timer)
+                                }
+                            },1000);
+                        }
+                    }
+                })
+            })
+        })
+    </script>
 {% endblock %}
 

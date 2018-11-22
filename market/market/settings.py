@@ -16,7 +16,7 @@ import sys
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 将apps 加入到包路径查找列表中
-sys.path.insert(0,os.path.join(BASE_DIR,"apps"))
+sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -38,10 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user.apps.UserConfig', # 用户模块
-    'shop.apps.ShopConfig', # 商城模块
-    'car.apps.CarConfig',   # 购物车模块
-    'order.apps.OrderConfig', # 订单模块
+    'user.apps.UserConfig',  # 用户模块
+    'shop.apps.ShopConfig',  # 商城模块
+    'car.apps.CarConfig',  # 购物车模块
+    'order.apps.OrderConfig',  # 订单模块
 ]
 
 MIDDLEWARE = [
@@ -129,3 +129,22 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
+
+# 添加缓存的配置
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# 配置session的存储引擎
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+# 秘钥,阿里短信配置
+ACCESS_KEY_ID = "LTAI2qSiJdWP87em"
+ACCESS_KEY_SECRET = "FzORQ587PgGBoOAdmxzCjaxQi8klUi"

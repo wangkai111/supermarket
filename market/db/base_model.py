@@ -2,6 +2,7 @@ from django.db import models
 
 
 class BaseModel(models.Model):
+    """基础类模版,用于一次性创建(创建时间,更新时间,是否删除)"""
     create_time = models.DateTimeField(auto_now_add=True, verbose_name="注册时间")  # 设置用户注册时间
     update_time = models.DateTimeField(auto_now=True, verbose_name="更新时间")  # 设置用户修改信息时间
     isDelete = models.BooleanField(default=False, verbose_name="是否删除")  # 设置是否假删除
