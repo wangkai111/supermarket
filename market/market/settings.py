@@ -68,6 +68,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -148,3 +149,9 @@ SESSION_CACHE_ALIAS = "default"
 # 秘钥,阿里短信配置
 ACCESS_KEY_ID = "LTAI2qSiJdWP87em"
 ACCESS_KEY_SECRET = "FzORQ587PgGBoOAdmxzCjaxQi8klUi"
+
+# 目的是分配一个资源URL
+MEDIA_URL = "/static/media/"
+
+# 配置该URL对应的物理目录存储地址
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')

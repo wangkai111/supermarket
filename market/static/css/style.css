@@ -170,7 +170,7 @@
     white-space: normal;
     text-overflow: ellipsis;}
 .shop-list-mid .shop-list-price{color: #cb2527; }
-/*.shop-list-price{  position: absolute; color: #7f7979; right: 10px; top: 10px;}*/
+/*.shop_head-list-price{  position: absolute; color: #7f7979; right: 10px; top: 10px;}*/
 .shopcart-list .del{ font-size: 24px; color:#909090; cursor: pointer; position: absolute; right: 10px; bottom: 10px;}
 .shop-list-mid .d-stock{ width: 55%; margin-top: 8px;}
 .shop-list-mid .d-stock .decrease{border-radius:3px 0px 0 3px; color: #666; float: left; border: 1px solid #dadada; width: 30%; height: 2.5rem; line-height: 2.5rem; text-align: center;}

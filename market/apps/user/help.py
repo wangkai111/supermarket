@@ -6,7 +6,6 @@ from aliyunsdkcore.client import AcsClient
 from aliyunsdkcore.profile import region_provider
 
 
-
 def set_password(password):
     """加密再加密"""
     new_password = "{}{}".format(password, settings.SECRET_KEY)
@@ -26,8 +25,6 @@ def verify_login_required(old):
     return new
 
 
-
-#
 # 注意：不要更改
 REGION = "cn-hangzhou"
 PRODUCT_NAME = "Dysmsapi"

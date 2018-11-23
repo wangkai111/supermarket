@@ -6,7 +6,7 @@ from django.views import View
 import re
 import random
 from db.base_view import BaseView
-from user.forms import RegForm, InforForm
+from user.forms import RegForm, InforForm, ForgetForm
 from user.help import set_password, send_sms
 from user.models import User
 from django_redis import get_redis_connection
@@ -33,8 +33,10 @@ def login(request):
 
             # 验证表单的密码是否和数据库的密码一致
             if user_password == password:
-                # 保存id登录标识符到session
+                # 保存id,头像登录标识符到session
                 request.session["id"] = user.id
+                request.session["telephone"] = user.telephone
+                request.session["logo"] = user.logo
                 # 跳转到主页
                 return redirect("user:个人中心")
             else:
@@ -99,7 +101,41 @@ def reg(request):
 
 def forgetpassword(request):
     """忘记密码界面"""
-    return render(request, "user/forgetpassword.html")
+    if request.method == "POST":
+        # 接收数据
+        res = request.POST
+        # 创建form对象,验证form表单中的数据是否写好
+        form = ForgetForm(res)
+        # 验证是否合法
+        if form.is_valid():
+            # 获取清洗后的数据
+            aa = form.cleaned_data
+            # 得到表单中的手机号
+            telephone = aa.get("telephone")
+            # 通过手机号获取到数据库中的这条数据
+            user = User.objects.filter(telephone=telephone).first()
+            # 判断手机号是否已经存在数据库中
+            if user:
+                # 获取表单中的密码
+                password = aa.get("password")
+                # 加密密码成哈希
+                mpassword = set_password(password)
+                # 将加密后的密码更新到数据库中
+                User.objects.filter(telephone=telephone).update(password=mpassword)
+                return redirect("user:登录")
+            else:
+                context = {
+                    "a": "该手机号之前未注册过"
+                }
+                return render(request, "user/forgetpassword.html", context)
+        else:
+            # 错误,将错误信息显示到页面
+            context = {
+                "errors": form.errors
+            }
+            return render(request, "user/forgetpassword.html", context)
+    else:
+        return render(request, "user/forgetpassword.html")
 
 
 def verification_code(request):
@@ -115,7 +151,7 @@ def verification_code(request):
             # 创建随机码
             random_code = "".join([str(random.randint(0, 9)) for _ in range(4)])
             # print(random_code)
-            # 连接到redis中
+            # 连接到redis中.
             r = get_redis_connection("default")
             # 将电话号码和随机码以键和值的形式存到redis中
             r.set(telephone, random_code)
@@ -139,7 +175,11 @@ class MemberView(BaseView):
     """个人中心"""
 
     def get(self, request):
-        return render(request, 'user/member.html')
+        context = {
+            "telephone": request.session.get("telephone"),
+            "logo": request.session.get("logo")
+        }
+        return render(request, 'user/member.html', context)
 
     def post(self, request):
         pass
@@ -163,8 +203,10 @@ class InforView(BaseView):
         # 得到参数
         # 获取表单中的数据
         data = request.POST
+        # 头像单独获取
+        tou = request.FILES
         # 处理数据
-        form = InforForm(data)
+        form = InforForm(data, tou)
         # 验证是否合法
         if form.is_valid():
             # 开始验证
@@ -173,13 +215,15 @@ class InforView(BaseView):
             # 通过session获取得到id
             id = request.session["id"]
             # 将数据更新到数据库
-            User.objects.filter(pk=id).update(name=a.get("name"),
-                                              sex=a.get("sex"),
-                                              birthday=a.get("birthday"),
-                                              school_name=a.get("school_name"),
-                                              address=a.get("address"),
-                                              hometown=a.get("hometown"),
-                                              )
+            user = User.objects.filter(pk=id)
+            user.name = a.get("name")
+            user.sex = a.get("sex")
+            user.birthday = a.get("birthday")
+            user.school_name = a.get("school_name")
+            user.address = a.get("address")
+            user.hometown = a.get("hometown")
+            user.logo = a.get("logo")
+            user.save()
             # 跳转到个人中心
             return redirect("user:个人中心")
         else:

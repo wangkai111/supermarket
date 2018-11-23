@@ -28,10 +28,10 @@
         <input type="password" name="rpassword" placeholder="确认密码" class="login-name">
         <p class="am-text-danger">{{ errors.rpassword.0 }}</p>
         <div class="yzm" style="margin-top: 1.5rem;">
-            <input type="text" class="reg-yzm" placeholder="输入验证码"/>
-            <input type="button" name="yzm" class="yzm-hq" value="获取验证码"/>
+            <input type="text" name="sr_yzm" class="reg-yzm" placeholder="输入验证码"/>
+            <input type="button" class="yzm-hq" value="获取验证码"/>
         </div>
-        <p class="am-text-danger">{{ c }}</p>
+        <p class="am-text-danger">{{ errors.sr_yzm.0 }}</p>
         <input type="submit" class="login-btn" value="立即注册">
         <p class="am-text-danger">{{ c }}</p>
         <div class="agree">
