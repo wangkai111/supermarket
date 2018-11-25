@@ -36,7 +36,6 @@ def login(request):
                 # 保存id,头像登录标识符到session
                 request.session["id"] = user.id
                 request.session["telephone"] = user.telephone
-                request.session["logo"] = user.logo
                 # 跳转到主页
                 return redirect("user:个人中心")
             else:
@@ -201,12 +200,12 @@ class InforView(BaseView):
 
     def post(self, request):
         # 得到参数
-        # 获取表单中的数据
-        data = request.POST
         # 头像单独获取
         tou = request.FILES
+        # 获取表单中的数据
+        data = request.POST
         # 处理数据
-        form = InforForm(data, tou)
+        form = InforForm(data,tou)
         # 验证是否合法
         if form.is_valid():
             # 开始验证
@@ -215,7 +214,7 @@ class InforView(BaseView):
             # 通过session获取得到id
             id = request.session["id"]
             # 将数据更新到数据库
-            user = User.objects.filter(pk=id)
+            user = User.objects.filter(pk=id).first()
             user.name = a.get("name")
             user.sex = a.get("sex")
             user.birthday = a.get("birthday")
@@ -223,6 +222,7 @@ class InforView(BaseView):
             user.address = a.get("address")
             user.hometown = a.get("hometown")
             user.logo = a.get("logo")
+            request.session["logo"] = user.logo
             user.save()
             # 跳转到个人中心
             return redirect("user:个人中心")

@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'shop.apps.ShopConfig',  # 商城模块
     'car.apps.CarConfig',  # 购物车模块
     'order.apps.OrderConfig',  # 订单模块
+    'ckeditor',  # 添加ckeditor 富文本编辑器
+    'ckeditor_uploader',  # 添加ckeditor富文本编辑器文件上传部件
 ]
 
 MIDDLEWARE = [
@@ -130,6 +132,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
+# 设置静态文件根目录,上线的时候用
+# STATIC_ROOT = os.path.join(BASE_DIR,"static")
 
 # 添加缓存的配置
 CACHES = {
@@ -155,3 +159,13 @@ MEDIA_URL = "/static/media/"
 
 # 配置该URL对应的物理目录存储地址
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
+
+# 配置ckeditor
+# 上传文件目录,相对与static
+CKEDITOR_UPLOAD_PATH = "uploads/"
+# 编辑器样式配置
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+    },
+}

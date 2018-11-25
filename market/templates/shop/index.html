@@ -27,8 +27,10 @@
     <!--图片轮换-->
     <div class="am-slider am-slider-default" data-am-flexslider id="demo-slider-0">
         <ul class="am-slides">
-            <li><img src="{% static 'images/banner.png' %}"/></li>
-            <li><img src="{% static 'images/banner.png' %}"/></li>
+            {% for lun in luns %}
+                <li><a href="{% url 'shop:商品详情' lun.sku_id.pk %}"><img style="width:70%" src="
+                        {{ MEDIA_URL }}{{ lun.image_address }}"/></a></li>
+            {% endfor %}
         </ul>
     </div>
     <!--导航-->
@@ -88,100 +90,38 @@
     <div class="h-line"></div>
     <!--不规则展示-->
     <div class="index-product">
-        <div class="index-pro-lf"><a href=""><img src="{% static 'images/s1.png' %}"/></a></div>
-        <div class="index-pro-lr"><a href=""><img src="{% static 'images/s2.png' %}"/></a></div>
-    </div>
-    <div class="product-bot">
-        <div class="product-bot-lf"><a href=""><img src="{% static 'images/s3.png' %}"/></a></div>
-        <div class="product-bot-lr">
-            <div class="top"><a href=""><img src="{% static "images/s4.png" %}"/></a></div>
-            <div class="bot">
-                <div class="bot-lf"><a href=""><img src="{% static 'images/s5.png' %}"/></a></div>
-                <div class="bot-lr"><a href=""><img src="{% static 'images/s6.png' %}"/></a></div>
-            </div>
+        <div class="index-pro-lf">
+            <a href="{{ active.0.url_address }}"><img src="{{ MEDIA_URL }}{{ active.0.image_address }}"/></a>
+        </div>
+        <div class="index-pro-lr">
+            <a href="{{ active.0.url_address }}"><img src="{{ MEDIA_URL }}{{ active.1.image_address }}"/></a>
         </div>
     </div>
     <!--不规则展示-->
     <div class="h-line"></div>
     <!-- 特色专区-->
-    <div class="sq-title">
-        <img src="{% static 'images/ts.png' %}" width="26"/>
-        特色专区
-    </div>
-    <ul data-am-widget="gallery" class="am-gallery pro-list am-avg-sm-2 am-avg-md-2 am-avg-lg-4 am-gallery-default">
-        <li>
-            <div class="am-gallery-item">
-                <a href="{% url 'shop:商品详情' %}" class="">
-                    <img src=" {% static 'images/test.png' %}"/>
-                    <h3 class="am-gallery-title">猪骨头棒新鲜生鲜肉制品猪大骨头筒骨熬汤佳品500g</h3>
-                    <div class="am-gallery-desc">￥52</div>
-                </a>
-            </div>
-        </li>
-        <li>
-            <div class="am-gallery-item">
-                <a href="{% url 'shop:商品详情' %}" class="">
-                    <img src=" {% static 'images/test1.png' %}"/>
-                    <h3 class="am-gallery-title">冻品批发大江鸡腿 冷鲜鸡腿放心食材1kg 冷冻食材</h3>
-                    <div class="am-gallery-desc">￥39</div>
-                </a>
-            </div>
-        </li>
-        <li>
-            <div class="am-gallery-item">
-                <a href="{% url 'shop:商品详情' %}" class="">
-                    <img src=" {% static 'images/test2.png' %}"/>
-                    <h3 class="am-gallery-title">法国加力果12个装 进口新鲜水果 嘎啦苹果 包邮</h3>
-                    <div class="am-gallery-desc">￥45.8</div>
-                </a>
-            </div>
-        </li>
-        <li>
-            <div class="am-gallery-item">
-                <a href="{% url 'shop:商品详情' %}" class="">
-                    <img src=" {% static 'images/test21.png' %}"/>
-                    <h3 class="am-gallery-title">法国加力果12个装 进口新鲜水果 嘎啦苹果 包邮</h3>
-                    <div class="am-gallery-desc">￥45.8</div>
-                </a>
-            </div>
-        </li>
-        <li>
-            <div class="am-gallery-item">
-                <a href="{% url 'shop:商品详情' %}" class="">
-                    <img src=" {% static 'images/test.png' %}"/>
-                    <h3 class="am-gallery-title">猪骨头棒新鲜生鲜肉制品猪大骨头筒骨熬汤佳品500g</h3>
-                    <div class="am-gallery-desc">￥52</div>
-                </a>
-            </div>
-        </li>
-        <li>
-            <div class="am-gallery-item">
-                <a href="{% url 'shop:商品详情' %}" class="">
-                    <img src=" {% static 'images/test1.png' %}"/>
-                    <h3 class="am-gallery-title">冻品批发大江鸡腿 冷鲜鸡腿放心食材1kg 冷冻食材</h3>
-                    <div class="am-gallery-desc">￥39</div>
-                </a>
-            </div>
-        </li>
-        <li>
-            <div class="am-gallery-item">
-                <a href="{% url 'shop:商品详情' %}" class="">
-                    <img src=" {% static 'images/test2.png' %}"/>
-                    <h3 class="am-gallery-title">法国加力果12个装 进口新鲜水果 嘎啦苹果 包邮</h3>
-                    <div class="am-gallery-desc">￥45.8</div>
-                </a>
-            </div>
-        </li>
-        <li>
-            <div class="am-gallery-item">
-                <a href="{% url 'shop:商品详情' %}" class="">
-                    <img src=" {% static 'images/test21.png' %}"/>
-                    <h3 class="am-gallery-title">法国加力果12个装 进口新鲜水果 嘎啦苹果 包邮</h3>
-                    <div class="am-gallery-desc">￥45.8</div>
-                </a>
-            </div>
-        </li>
-    </ul>
+    {% for act in act_zone %}
+        <div class="sq-title">
+            <img src="{% static 'images/ts.png' %}" width="26"/>
+            {{ act.zone_name }}
+        </div>
+        <ul data-am-widget="gallery" class="am-gallery pro-list am-avg-sm-2 am-avg-md-2 am-avg-lg-4 am-gallery-default">
+            {% for zone in act.active_sku_set.all %}
+                <li>
+                    <div class="am-gallery-item">
+                        <a href="{% url 'shop:商品详情' zone.sku_id.pk %}" class="">
+                            <img src="{{ MEDIA_URL }}{{ zone.sku_id.sku_address }}"/>
+                            <h3 class="am-gallery-title">
+                                {{ zone.sku_id.spu_id.spu_name }}&emsp;{{ zone.sku_id.sku_name }}</h3>
+                            <div class="am-gallery-desc">{{ zone.sku_id.sku_price }}</div>
+                        </a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+
+
     <!--签到-->
     <div class="qd-box">
         <div class="popup-title">
@@ -197,51 +137,51 @@
 
 
 {% block foot %}
-<!--底部-->
-<div style="height: 55px;"></div>
+    <!--底部-->
+    <div style="height: 55px;"></div>
     <div data-am-widget="navbar" class="am-navbar am-cf am-navbar-default sq-foot am-no-layout" id="">
-    <ul class="am-navbar-nav am-cf am-avg-sm-5">
-        <li>
-            <a href="{% url 'shop:商城主页' %}" class="curr">
-                <span class="am-icon-home"></span>
-                <span class="am-navbar-label">首页</span>
-            </a>
-        </li>
-        <li>
-            <a href="message.html" class="">
-                <span class="am-icon-comments"></span>
-                <span class="am-navbar-label">动态</span>
-            </a>
-        </li>
-        <li>
-            <a href="shopcart.html" class="">
-                <span class="am-icon-shopping-cart"></span>
-                <span class="am-navbar-label">购物车</span>
-            </a>
-        </li>
-        <li>
-            <a href="allorder.html" class="">
-                <span class="am-icon-file-text"></span>
-                <span class="am-navbar-label">订单</span>
-            </a>
-        </li>
+        <ul class="am-navbar-nav am-cf am-avg-sm-5">
+            <li>
+                <a href="{% url 'shop:商城主页' %}" class="curr">
+                    <span class="am-icon-home"></span>
+                    <span class="am-navbar-label">首页</span>
+                </a>
+            </li>
+            <li>
+                <a href="message.html" class="">
+                    <span class="am-icon-comments"></span>
+                    <span class="am-navbar-label">动态</span>
+                </a>
+            </li>
+            <li>
+                <a href="shopcart.html" class="">
+                    <span class="am-icon-shopping-cart"></span>
+                    <span class="am-navbar-label">购物车</span>
+                </a>
+            </li>
+            <li>
+                <a href="allorder.html" class="">
+                    <span class="am-icon-file-text"></span>
+                    <span class="am-navbar-label">订单</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="{% url 'user:个人中心' %}" class="">
-                <span class="am-icon-user"></span>
-                <span class="am-navbar-label">我的</span>
-            </a>
-        </li>
-    </ul>
-</div>
+            <li>
+                <a href="{% url 'user:个人中心' %}" class="">
+                    <span class="am-icon-user"></span>
+                    <span class="am-navbar-label">我的</span>
+                </a>
+            </li>
+        </ul>
+    </div>
 {% endblock %}
 
 
 {% block foot_js %}
     <script type='text/javascript'>
-    (function () {
-        new PopUp_api({el: '.index-qd', html: '.qd-box'});
-    })()
+        (function () {
+            new PopUp_api({el: '.index-qd', html: '.qd-box'});
+        })()
     </script>
 
     <script src="{% static 'js/jquery.min.js' %}"></script>

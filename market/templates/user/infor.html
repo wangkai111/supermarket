@@ -13,7 +13,7 @@
         </h1>
     </header>
     <div style="height: 49px;"></div>
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <ul class="safty1">
             <li>
@@ -41,7 +41,7 @@
             </li>
             <li>
                 <i>生日</i>
-                <input type="date" class="infor-tele" name="birthday" value="{{ data.birthday | default:'Y-m-d' }}" placeholder="出生日期"/>
+                <input type="date" class="infor-tele" name="birthday" value="{{ data.birthday | date:'Y-m-d' }}" placeholder="出生日期"/>
             </li>
             <p class="am-text-danger">{{ errors.birthday.0 }}</p>
         </ul>

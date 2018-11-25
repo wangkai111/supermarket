@@ -168,3 +168,4 @@ class InforForm(forms.Form):
     school_name = forms.CharField(error_messages={"required": "请填写学校名字"})
     address = forms.CharField(error_messages={"required": "请填写详细地址"})
     hometown = forms.CharField(error_messages={"required": "请填写家乡地址"})
+    logo = forms.FileField()

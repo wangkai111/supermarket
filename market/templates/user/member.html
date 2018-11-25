@@ -14,7 +14,7 @@
     <div style="height: 49px;"></div>
     <div class="member">
         <div class="mem-tit">{{ telephone }}
-            <a href="step.html" class="step"><img src="{% static 'images/step.png' %}" width="26"/></a>
+            <a href="step.html" class="step"><img src="{{ MEDIA_URL }}{{ logo }}" width="26"/></a>
         </div>
         <div class="mem-pic">
             <div class="mem-pic-bg" style="background-image: url({{ MEDIA_URL }}{{ logo }});"></div>

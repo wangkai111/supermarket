@@ -18,7 +18,7 @@ class User(BaseModel):
     address = models.CharField(max_length=255, null=True, blank=True, verbose_name="位置")  # 设置用户地址
     hometown = models.CharField(max_length=50, null=True, blank=True, verbose_name="家乡")  # 设置家乡
     # 设置头像
-    logo = models.ImageField(upload_to="head/%Y%m%d",default="head/memtx.png",verbose_name="用户头像")
+    logo = models.ImageField(upload_to="head/%Y%m/%d",default="head/memtx.png",verbose_name="用户头像")
 
     class Meta:
         db_table = 'user'
