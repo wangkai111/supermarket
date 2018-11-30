@@ -22,7 +22,7 @@ from django_redis import get_redis_connection
 
 
 # 验证注册表单
-from user.models import User
+from user.models import User, Address
 
 
 class RegForm(forms.Form):
@@ -169,3 +169,74 @@ class InforForm(forms.Form):
     address = forms.CharField(error_messages={"required": "请填写详细地址"})
     hometown = forms.CharField(error_messages={"required": "请填写家乡地址"})
     logo = forms.FileField()
+
+
+# 验证新增收货地址
+class AddressModelForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = ['hcity', 'hproper', 'harea', 'username', 'telephone', 'isDefault', 'detail']
+
+        error_messages = {
+            "harea": {
+                "required": "收货地址必填"
+            },
+            "username": {
+                "required": "收货人姓名必填"
+            },
+            "telephone": {
+                "required": "收货人手机号必填"
+            },
+            "detail": {
+                "required": "详细地址必填"
+            },
+        }
+
+    # 验证当前用户的收货地址数量,不能超过6个
+    def clean(self):
+        # 得到数据
+        userid_id = self.data.get("userid_id")
+        count = Address.objects.filter(userid_id=userid_id,isDelete=False).count()
+        if count >= 6:
+            raise forms.ValidationError("收货地址不能超过6个")
+
+        # 默认收货地址只有一个,判断当前添加的是 isDefault==True
+        isDefault = self.cleaned_data.get("isDefault")
+        if isDefault:
+            # 其它的地址就设置成False
+            Address.objects.filter(userid_id=userid_id).update(isDefault=False)
+        return self.cleaned_data
+
+
+# 验证修改收货地址
+class AddressUpdateModelForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = ['hcity', 'hproper', 'harea', 'username', 'telephone', 'isDefault', 'detail']
+
+        error_messages = {
+            "harea": {
+                "required": "收货地址必填"
+            },
+            "username": {
+                "required": "收货人姓名必填"
+            },
+            "telephone": {
+                "required": "收货人手机号必填"
+            },
+            "detail": {
+                "required": "详细地址必填"
+            },
+        }
+
+    # 验证当前用户的收货地址数量,不能超过6个
+    def clean(self):
+        # 得到数据
+        userid_id = self.data.get("userid_id")
+
+        # 默认收货地址只有一个,判断当前添加的是 isDefault==True
+        isDefault = self.cleaned_data.get("isDefault")
+        if isDefault:
+            # 其它的地址就设置成False
+            Address.objects.filter(userid_id=userid_id).update(isDefault=False)
+        return self.cleaned_data

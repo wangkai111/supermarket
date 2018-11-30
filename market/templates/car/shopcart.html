@@ -1,0 +1,229 @@
+{% extends "publish/base.html" %}
+{% load static %}
+
+{% block content %}
+    <header data-am-widget="header" class="am-header am-header-default sq-head ">
+        <div class="am-header-left am-header-nav">
+            <a href="javascript:history.back()" class="">
+                <i class="am-icon-chevron-left"></i>
+            </a>
+        </div>
+        <h1 class="am-header-title">
+            <a href="" class="">购物车</a>
+        </h1>
+    </header>
+    <div style="height: 49px;"></div>
+    <!--购物车空的状态-->
+    <div class="login-logo" style="display: {% if skus %}none{% else %}block{% endif %}">
+        <img src="{% static 'images/care.png' %}">
+        <p>亲、您的购物车还是空空的哦，快去装满它!</p>
+        <a href="{% url 'shop:商城主页' %}" class="goshopping">前去逛逛</a>
+    </div>
+    <ul class="shopcart-list">
+        {% for sku in skus %}
+            <li>
+                <label class="am-checkbox am-warning">
+                    <input type="checkbox" checked="checked" value="" data-am-ucheck checked>
+                </label>
+                <a href="{% url 'shop:商品详情' sku.pk %}"><img src="{{ MEDIA_URL }}{{ sku.sku_address }}"
+                                                            class="shop-pic"/></a>
+                <div class="shop-list-mid">
+                    <div class="tit"><a
+                            href="{% url 'shop:商品详情' sku.pk %}">{{ sku.spu_id.spu_name }}&emsp;{{ sku.sku_name }}</a>
+                    </div>
+                    <b class="shop-list-price">￥<span class="price">{{ sku.sku_price }} </span></b>
+                </div>
+                <div class="list-cart1">
+                    <div class="d-stock">
+                        <a class="decrease">-</a>
+                        <input sku_id="{{ sku.pk }}" readonly="" class="text_box num" name="" type="text"
+                               value="{{ sku.count }}">
+                        <a class="increase">+</a>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+        <div style="height: 10px; background: #eee;"></div>
+    </ul>
+    <div class="shop-fix">
+        <label class="am-checkbox am-warning">
+            <input class="check_all" type="checkbox" checked="checked" value="" data-am-ucheck checked>
+        </label>
+        <a class="del">全选</a>
+        <a href="{% url 'order:确认订单' %}" class="js-btn">去结算</a>
+        <div class="js-text">
+            <P>合计：<b class="allprice">￥00.00</b></P>
+            <p class="js-car">免费配送</p>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block foot %}
+    <!--底部-->
+    <div style="height: 55px;"></div>
+    <div data-am-widget="navbar" class="am-navbar am-cf am-navbar-default sq-foot am-no-layout" id="">
+        <ul class="am-navbar-nav am-cf am-avg-sm-5">
+            <li>
+                <a href="{% url 'shop:商城主页' %}" class="">
+                    <span class="am-icon-home"></span>
+                    <span class="am-navbar-label">首页</span>
+                </a>
+            </li>
+            <li>
+                <a href="message.html" class="">
+                    <span class="am-icon-comments"></span>
+                    <span class="am-navbar-label">动态</span>
+                </a>
+            </li>
+            <li>
+                <a href="shopcart.html" class="">
+                    <span class="am-icon-shopping-cart"></span>
+                    <span class="am-navbar-label">购物车</span>
+                </a>
+            </li>
+            <li>
+                <a href="allorder.html" class="">
+                    <span class="am-icon-file-text"></span>
+                    <span class="am-navbar-label">订单</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'user:个人中心' %}" class="curr">
+                    <span class="am-icon-user"></span>
+                    <span class="am-navbar-label">我的</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block foot_js %}
+    <script>
+        $(function () {
+            // 用户点击+ ,将商品加入到购物车
+            $('.increase').click(function () {
+                var self = $(this);
+                var current_num = parseInt(self.siblings('input').val());
+
+                // 收集数据,count每次只能加一次,所以写死
+                var count = 1;
+                // sku_id通过siblings属性,可以获取到同一层的兄弟元素,再通过attr属性,获取到里面的值
+                var sku_id = self.siblings('input').attr('sku_id');
+                // 发送ajax请求
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'car:添加购物车' %}",
+                    data: {"sku_id": sku_id, "count": count, "csrfmiddlewaretoken": "{{ csrf_token }}"},
+                    dataType: "json",
+                    success: function (data) {
+                        // console.debug(data)
+                        // 商品添加到购物车
+                        if (data.name == 0) {
+                            current_num += 1;
+                            self.siblings('input').val(current_num);
+
+                            // 调用计算价格
+                            allprice();
+                        }
+                    },
+                });
+            });
+
+            // 用户点击- ,将商品在购物车的数量减少
+            $('.decrease').click(function () {
+                var self = $(this);
+                var current_num = parseInt(self.siblings('input').val());
+                if (current_num > 0) {
+                    // 收集数据,count每次只能减一次,所以写死
+                    var count = -1;
+                    // sku_id通过siblings属性,可以获取到同一层的兄弟元素,再通过attr属性,获取到里面的值
+                    var sku_id = self.siblings('input').attr('sku_id');
+                    // 发送ajax请求
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'car:添加购物车' %}",
+                        data: {"sku_id": sku_id, "count": count, "csrfmiddlewaretoken": "{{ csrf_token }}"},
+                        dataType: "json",
+                        success: function (data) {
+                            // console.debug(data)
+                            // 商品添加到购物车
+                            if (data.name == 0) {
+                                if (current_num > 1) {
+                                    current_num -= 1;
+                                    self.siblings('input').val(current_num);
+                                } else if (current_num <= 1) {
+                                    // 当前li被删除
+                                    self.parents("li").remove();
+                                    // 如果所有的li都被删除了,购物车界面就要显示出来
+                                    if ($(".shopcart-list").find("li").length == 0) {
+                                        // 显示购物车
+                                        $(".login-logo").show();
+                                    }
+                                }
+                                // 调用计算价格
+                                allprice();
+                            }
+                        },
+                    });
+                }
+            });
+
+            // 设置全选的复选框
+            $(".check_all").on("change", function () {
+                // console.debug(this);
+                // 设置当前复选框的状态和商品中的复选框的状态是一致的
+
+                // 获取当前复选框的选中状态,其实就是获取checked属性的值,返回的结果是True和False
+                var status = $(this).prop("checked");
+                // console.debug(status);
+                // 修改商品列表中复选框的状态,:checkbox 获取全部复选框
+                $(".shopcart-list").find(":checkbox").prop("checked", status)
+                // 调用计算价格
+                allprice();
+            });
+
+            // 设置不是全选复选框的时候
+            $(".shopcart-list").find(":checkbox").on("change", function () {
+                // 重新计算价格
+                allprice();
+                // 获取复选框的数量和选中的复选框数量,一致就说明全选
+                if ($(".shopcart-list").find(":checkbox").length == $(".shopcart-list").find(":checked").length) {
+                    $(".check_all").prop("checked", true);
+                } else {
+                    $(".check_all").prop("checked", false);
+                }
+            });
+
+
+            // 计算商品总价格,只能计算复选框中被选中的商品总价格,定义一个方法
+            function allprice() {
+                // 获取被选中的input复选框
+                var check_box = $(".shopcart-list").find(":checked");
+                // 遍历复选框
+                // 初始化价格
+                var all_price = 0;
+                $.each(check_box, function (i, e) {
+                    var li = $(e).parents("li");
+                    var price = li.find(".price").text();
+                    var num = li.find(".num").val();
+                    // console.debug(price,num);
+                    all_price += price * num;
+                });
+                // 将计算后的价格显示在页面上
+                $(".allprice").text(all_price.toFixed(2));
+            }
+
+            // 调用计算价格
+            allprice()
+        })
+    </script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/amazeui.min.js' %}"></script>
+{% endblock %}
+
+
+ 
+ 
+

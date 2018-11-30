@@ -14,5 +14,5 @@ urlpatterns = [
     url(r'^shop_speed/$',shop_speed,name='零食飞速'),
     url(r'^shop_list/$',shop_list,name='琳琅的店'),
     url(r'^shop_detail/(?P<id>\d+)/$',shop_detail,name='商品详情'),
-    url(r'^shop_category/(?P<cate_id>\d+)/$',shop_category,name='超市'),
+    url(r'^shop_category/(?P<cate_id>\d+)/(?P<order>\d)/$',shop_category,name='超市'),
 ]

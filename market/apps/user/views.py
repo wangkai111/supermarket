@@ -6,9 +6,9 @@ from django.views import View
 import re
 import random
 from db.base_view import BaseView
-from user.forms import RegForm, InforForm, ForgetForm
+from user.forms import RegForm, InforForm, ForgetForm, AddressModelForm, AddressUpdateModelForm
 from user.help import set_password, send_sms
-from user.models import User
+from user.models import User, Address
 from django_redis import get_redis_connection
 
 
@@ -36,8 +36,13 @@ def login(request):
                 # 保存id,头像登录标识符到session
                 request.session["id"] = user.id
                 request.session["telephone"] = user.telephone
+                # 判断链接上是否有参数next,如果有就跳转到指定页面
                 # 跳转到主页
-                return redirect("user:个人中心")
+                next = request.GET.get("next")
+                if next:
+                    return redirect(next)
+                else:
+                    return redirect("user:个人中心")
             else:
                 context = {
                     "a": "用户名或者密码错误"
@@ -205,7 +210,7 @@ class InforView(BaseView):
         # 获取表单中的数据
         data = request.POST
         # 处理数据
-        form = InforForm(data,tou)
+        form = InforForm(data, tou)
         # 验证是否合法
         if form.is_valid():
             # 开始验证
@@ -232,3 +237,120 @@ class InforView(BaseView):
                 "errors": form.errors,
             }
             return render(request, 'user/infor.html', context)
+
+
+class AddressShow(BaseView):
+    """管理收货地址"""
+
+    def get(self, request):
+        # 获取id
+        id = request.session.get("id")
+        # 获取该id下的用户收货地址数据
+        addresses = Address.objects.filter(userid_id=id, isDelete=False).order_by("-isDefault")
+        # 回显数据
+        context = {
+            "addresses": addresses,
+        }
+        return render(request, "user/gladdress.html", context)
+
+    def post(self, request):
+        pass
+
+
+class AddressAdd(BaseView):
+    """新增收货地址"""
+
+    def get(self, request):
+        return render(request, "user/address.html")
+
+    def post(self, request):
+        # 获取到用户id
+        id = request.session.get("id")
+        # 接收参数
+        data = request.POST.dict()
+        data["userid_id"] = id
+        # 验证参数
+        form = AddressModelForm(data)
+        # 处理数据
+        if form.is_valid():
+            """
+            # 清洗后的数据
+            cleaned_data = form.cleaned_data
+            第一种方式,原生
+            # 将用户id添加到清洗后的数据里
+            cleaned_data["userid_id"] = id
+            # 将清洗后的数据保存到数据库中
+            Address.objects.create(**cleaned_data)
+            """
+            # 第二种方式,自定义在对象上添加键和值
+            form.instance.userid_id = id
+            # modelform对象上有个save()方法,直接就能保存数据
+            form.save()
+            # 跳转到收货地址
+            return redirect("user:管理收货地址")
+
+        else:
+            # 抛出错误信息
+            context = {
+                "form": form,
+            }
+            # 返回响应
+            return render(request, "user/address.html", context)
+
+
+class AddressUpdate(BaseView):
+    """修改收货地址"""
+
+    def get(self, request, id):
+        # 获取用户id
+        user_id = request.session.get("id")
+        try:
+            # 获取该id用户下的地址
+            address = Address.objects.get(userid_id=user_id, pk=id)
+        except Address.DoesNotExist:
+            return redirect("user:管理收货地址")
+        # 渲染页面
+        context = {
+            "address": address,
+        }
+        return render(request, "user/addressupdate.html", context)
+
+    def post(self, request, id):
+        # 接收数据
+        data = request.POST.dict()
+        # 获取用户id
+        user_id = request.session.get("id")
+        # 将用户id保存到data中
+        data['userid_id'] = user_id
+        # 验证数据
+        form = AddressUpdateModelForm(data)
+        # 处理数据
+        if form.is_valid():
+            # 返回清洗后的数据
+            cleande_data = form.cleaned_data
+            # 将返回后的数据更新到数据库中
+            Address.objects.filter(pk=id, userid_id=user_id).update(**cleande_data)
+            # 响应
+            return redirect("user:管理收货地址")
+        else:
+            context = {
+                "form": form,
+                "address": data,
+            }
+            return render(request, "user/addressupdate.html", context)
+
+
+def del_address(request):
+    """删除收货地址"""
+    # 必须登录,才能获取到用户id
+    if request.method == "POST":
+        user_id = request.session.get("id")
+        id = request.POST.get("id")
+        if user_id is None:
+            return JsonResponse({"val": 1, "err": "没有登录!"})
+        else:
+            # 删除使用假删除更好
+            Address.objects.filter(userid_id=user_id, pk=id).update(isDelete=True)
+            return JsonResponse({"val": 0, "err": "删除成功"})
+    else:
+        return JsonResponse({"var": 2, "err": "请求方式错误"})

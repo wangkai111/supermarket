@@ -69,7 +69,7 @@
         <ul class="user-nav">
             <li><a href="{% url 'user:个人资料' %}"> <img src="{% static 'images/1-icon4.png' %}">
                 <p>个人资料</p></a></li>
-            <li><a href="gladdress.html"> <img src="{% static 'images/1-icon5.png' %}">
+            <li><a href="{% url 'user:管理收货地址' %}"> <img src="{% static 'images/1-icon5.png' %}">
                 <p>收货地址</p></a></li>
             <li><a href="saftystep.html"> <img src="{% static 'images/1-icon6.png' %}">
                 <p>安全设置</p></a></li>
@@ -185,7 +185,7 @@
                 </a>
             </li>
             <li>
-                <a href="shopcart.html" class="">
+                <a href="{% url 'car:购物车界面' %}" class="">
                     <span class="am-icon-shopping-cart"></span>
                     <span class="am-navbar-label">购物车</span>
                 </a>

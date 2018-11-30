@@ -14,6 +14,15 @@
             white-space: normal;
             text-overflow: ellipsis;
         }
+
+        .list-price {
+            background: url({% if order == 2 %}{% static 'images/order-bot.png' %}
+            {% elif order == 3 %}{% static 'images/order-top.png' %}
+            {% else %}{% static 'images/order.png' %}
+            {% endif %}) no-repeat right center;
+            padding-right: 20px;
+            font-style: normal;
+        }
     </style>
 {% endblock %}
 
@@ -26,57 +35,70 @@
             </a>
         </div>
         <div class="cate-search">
-            <input type="text" class="cate-input" placeholder="请输入您要的搜索的产品关键词"/>
-            <input type="button" class="cate-btn"/>
+            <form action="/search/" method="get">
+                <input type="text" name="q" value="" class="cate-input" placeholder="请输入您要的搜索的产品关键词"/>
+                <input type="submit" class="cate-btn" value=""/>
+            </form>
         </div>
     </header>
     <div style="height: 49px;"></div>
     <ul class="list-nav">
-        <li class="current"><a href="">综合</a></li>
-        <li><a href="">销量</a></li>
-        <li><a href=""><i class="list-price">价格</i></li>
-        <li><a href="">新品</a></li>
+        <li {% if order == 0 %}class="current"{% endif %}><a href="{% url 'shop:超市' cate_id 0 %}">综合</a></li>
+        <li {% if order == 1 %}class="current"{% endif %}><a href="{% url 'shop:超市' cate_id 1 %}">销量</a></li>
+        <li {% if order == 2 %}class="current"{% endif %}><a href="{% url 'shop:超市' cate_id 2 %}"><i class="list-price">价格</i></a>
+        </li>
+        <li {% if order == 4 %}class="current"{% endif %}><a href="{% url 'shop:超市' cate_id 4 %}">新品</a></li>
     </ul>
     <div class="content-list">
         <div class="list-left">
             {% for s in sorts %}
-                <li {% if cate_id == s.pk%}
+                <li {% if cate_id == s.pk %}
                     class="current"
                 {% endif %}>
-                    <a href="{% url 'shop:超市' s.pk %}">{{ s.sort_name }}</a>
+                    <a href="{% url 'shop:超市' s.pk order %}">{{ s.sort_name }}</a>
                 </li>
             {% endfor %}
         </div>
         <div class="list-right">
             <ul class="list-pro">
-                {% for s in sku.all %}
+                {% for s in sku.object_list %}
                     <li>
-                    <a href="{% url 'shop:商品详情' s.pk %}"><img src="{{ MEDIA_URL }}{{ s.sku_address }}" class="list-pic"/></a>
-                    <div class="shop-list-mid" style="width: 65%;">
-                        <div class="tit"><a href="{% url 'shop:商品详情' s.pk %}">{{ s.spu_id.spu_name }}&emsp;{{ s.sku_name }}</a></div>
-                        <div class="am-gallery-desc">{{ s.sku_price }}</div>
-                        <p>销量:{{ s.sku_sale }}{{ s.unit.unit_name }}</p>
-                    </div>
-                    <div class="list-cart">
-                        <div class="d-stock ">
-                            <a class="decrease">-</a>
-                            <input id="num" readonly="" class="text_box" name="" type="text" value="0">
-                            <a class="increase">+</a>
+                        <a href="{% url 'shop:商品详情' s.pk %}">
+                            <img src="{{ MEDIA_URL }}{{ s.sku_address }}" class="list-pic"/>
+                        </a>
+                        <div class="shop-list-mid" style="width: 65%;">
+                            <div class="tit">
+                                <a href="{% url 'shop:商品详情' s.pk %}">{{ s.spu_id.spu_name }}&emsp;{{ s.sku_name }}</a>
+                            </div>
+                            <div class="am-gallery-desc">{{ s.sku_price }}</div>
+                            <p>销量:{{ s.sku_sale }}{{ s.unit.unit_name }}</p>
                         </div>
-                    </div>
-                    <!--<a href="" class="list-cart"><img src="images/cart.png" width="30"/></a>-->
-                </li>
-                    {% empty %}
+                        <div class="list-cart">
+                            <div class="d-stock ">
+                                <a class="decrease">-</a>
+                                <input id="num" sku_id="{{ s.pk }}" readonly="" class="text_box" name="" type="text" value="0">
+                                <a class="increase">+</a>
+                            </div>
+                        </div>
+                        <!--<a href="" class="list-cart"><img src="images/cart.png" width="30"/></a>-->
+                    </li>
+                {% empty %}
                     <li>该分类下暂无商品~~~</li>
                 {% endfor %}
             </ul>
+            {% if sku.has_previous %}
+                <a href="?p={{ sku.previous_page_number }}" class="am-btn">上一页</a>
+            {% endif %}
+            {% if sku.has_next %}
+                <a href="?p={{ sku.next_page_number }}" class="am-btn">下一页</a>
+            {% endif %}
         </div>
     </div>
 
     <!--底部-->
     <div style="height: 55px;"></div>
     <div class="fix-bot">
-        <div class="fix-bot-cart"><i>8</i></div>
+        <a href="{% url 'car:购物车界面' %}"><div class="fix-bot-cart"><i id="car_count">{{ car_count }}</i></div></a>
         <a href="tureorder.html" class="list-js">去结算</a>
         <a href="tureorder.html" class="list-jsk">一键快购</a>
         <!--<div class="js-text">
@@ -93,30 +115,96 @@
     <script>
         //购物数量加减
         $(function () {
+            // 用户点击+ ,将商品加入到购物车
             $('.increase').click(function () {
                 var self = $(this);
                 var current_num = parseInt(self.siblings('input').val());
                 current_num += 1;
-                if (current_num > 0) {
-                    self.siblings(".decrease").fadeIn();
-                    self.siblings(".text_box").fadeIn();
-                }
-                self.siblings('input').val(current_num);
-                update_item(self.siblings('input').data('item-id'));
-            })
+
+                // 收集数据,count每次只能加一次,所以写死
+                var count = 1;
+                // sku_id通过siblings属性,可以获取到同一层的兄弟元素,再通过attr属性,获取到里面的值
+                var sku_id = self.siblings('input').attr('sku_id');
+                // 发送ajax请求
+                $.ajax({
+                   type:"POST",
+                   url:"{% url 'car:添加购物车' %}",
+                   data:{"sku_id":sku_id,"count":count,"csrfmiddlewaretoken":"{{ csrf_token }}"},
+                   dataType:"json",
+                   success:function (data) {
+                       // console.debug(data)
+                       // 商品添加到购物车
+                       if(data.name==0){
+                           if (current_num > 0) {
+                                self.siblings(".decrease").fadeIn();
+                                self.siblings(".text_box").fadeIn();
+                           }
+                           self.siblings('input').val(current_num);
+
+                           // 更新购物车中数据
+                           $("#car_count").text(data.car_count);
+                       // 用户没有登录,判断是否要登录
+                       }else if(data.name==1){
+                           var flag = confirm("当前没有登录,是否进行登录");
+                           if(flag){
+                               location.href= "{% url 'user:登录' %}?next={% url 'shop:超市' cate_id order  %}"
+                           }
+                       }
+                   },
+
+                });
+            });
+            // 用户点击- ,将商品在购物车的数量减少
             $('.decrease').click(function () {
                 var self = $(this);
                 var current_num = parseInt(self.siblings('input').val());
                 if (current_num > 0) {
-                    current_num -= 1;
-                    if (current_num < 1) {
-                        self.fadeOut();
-                        self.siblings(".text_box").fadeOut();
-                    }
-                    self.siblings('input').val(current_num);
-                    update_item(self.siblings('input').data('item-id'));
+                    // 收集数据,count每次只能减一次,所以写死
+                    var count = -1;
+                    // sku_id通过siblings属性,可以获取到同一层的兄弟元素,再通过attr属性,获取到里面的值
+                    var sku_id = self.siblings('input').attr('sku_id');
+                    // 发送ajax请求
+                    $.ajax({
+                       type:"POST",
+                       url:"{% url 'car:添加购物车' %}",
+                       data:{"sku_id":sku_id,"count":count,"csrfmiddlewaretoken":"{{ csrf_token }}"},
+                       dataType:"json",
+                       success:function (data) {
+                           // console.debug(data)
+                           // 商品添加到购物车
+                           if(data.name==0){
+                                current_num -= 1;
+                                if (current_num < 1) {
+                                    self.fadeOut();
+                                    self.siblings(".text_box").fadeOut();
+                                }
+                                self.siblings('input').val(current_num);
+
+                               // 更新购物车中数据
+                               $("#car_count").text(data.car_count);
+                           // 用户没有登录,判断是否要登录
+                           }else if(data.name==1){
+                               var flag = confirm("当前没有登录,是否进行登录");
+                               if(flag){
+                                   location.href= "{% url 'user:登录' %}?next={% url 'shop:超市' cate_id order  %}"
+                               }
+                           }
+                       },
+                    });
                 }
             })
-        })
+        });
+
+        // 判断用户点击的是按价格升序还是降序
+        $(function () {
+            if ("{{ order }}" == 2) {
+                $(".list-price").parent("a").attr("href", "{% url 'shop:超市' cate_id 3 %}")
+            } else if ("{{ order }}" == 3) {
+                $(".list-price").parent("a").attr("href", "{% url 'shop:超市' cate_id 2 %}")
+            }
+        });
+
+        // 用户点击+,将商品保存到购物车,点击-.将购物车中的数量减1
+
     </script>
 {% endblock %}

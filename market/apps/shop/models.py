@@ -23,6 +23,7 @@ class Shop_SPU(BaseModel):
     spu_name = models.CharField(max_length=50, verbose_name="商品SPU名称")
     # 使用富文本编辑器渲染之前的普通文本框
     spu_content = RichTextUploadingField(verbose_name="商品SPU详情")
+    # spu_content = models.TextField(verbose_name="商品SPU详情")
 
     def __str__(self):
         return self.spu_name

@@ -48,12 +48,10 @@
         	<h4>数量：</h4>
             <div class="d-stock">
               <a class="decrease">-</a>
-                <input id="num" readonly="" class="text_box" name="" type="text" value="1">
-                <input id="id" type="hidden" value="644">
+                <input id="num" sku_id="{{ goods.pk }}" readonly="" class="text_box" name="" type="text" value="1">
                 <a class="increase">+</a>
-               <span id="dprice" class="price" style="display:none"> 36</span>
             </div>
-            <h4>{{ goods.unit }}：</h4>
+            <h4>{{ goods.unit }}</h4>
         </div>
         <div style="background: #eee; height: 10px;"></div>
         <div class="am-tabs detail-list" data-am-tabs>
@@ -105,9 +103,10 @@
             <!--底部-->
      <div style=" height: 55px;"></div>
      <ul class="fix-shopping">
-        <li><a href="shopcart.html" class="join">加入购物车</a></li>
+        <li><a href="javascript:;" class="join">加入购物车</a></li>
         <li><a href="tureorder.html" class="imm-buy">立即购买</a></li>
      </ul>
+{#    {% csrf_token %}#}
 {% endblock %}
 
 
@@ -120,18 +119,51 @@
 			var current_num = parseInt(self.siblings('input').val());
 			current_num += 1;
 			self.siblings('input').val(current_num);
-			update_item(self.siblings('input').data('item-id'));
-		})
+		});
 		$('.decrease').click(function(){
 			var self = $(this);
 			var current_num = parseInt(self.siblings('input').val());
 			if(current_num > 1){
 				current_num -= 1;
 				self.siblings('input').val(current_num);
-				update_item(self.siblings('input').data('item-id'));
 			}
 		})
-	})
+	});
+
+    $(function () {
+        $(".join").on("click",function () {
+            // console.debug(11)
+            //将当前商品放到购物车
+            // 获取到num input框
+            var num_input = $("#num");
+            // 获取到sku_id
+            var sku_id = num_input.attr("sku_id");
+            // 获取到count
+            var count = num_input.val();
+            // 发送ajax请求
+            $.ajax({
+                type:"POST",
+                url:"{% url 'car:添加购物车' %}",
+                data:{"sku_id":sku_id,"count":count,"csrfmiddlewaretoken":"{{ csrf_token }}"},
+                dataType:"json",
+                success:function (data) {
+                    // console.debug(data);
+                    if(data.name == 0){
+                        alert("添加购物车成功")
+                    }else if(data.name==1){
+                        // 登录失败,跳转到登录页面
+                        var flag = confirm("当前没有登录,是否进行登录");
+                        if(flag){
+                            // 如果为True,就要跳转到登录界面
+                            location.href = "{% url 'user:登录' %}?next={% url 'shop:商品详情' goods.pk %}"
+                        }
+                    }
+                },
+            });
+        });
+    });
+
+
     </script>
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/amazeui.min.js' %}"></script>

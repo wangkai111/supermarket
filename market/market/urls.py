@@ -16,8 +16,13 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from shop.views import shop_index
+
 urlpatterns = [
+    url(r'^$', shop_index),  # 商城首页
     url(r'^admin/', admin.site.urls),
+    # 全文搜索框架
+    url(r'^search/', include('haystack.urls')),
     # 上传部件自动调用的上传地址
     url(r'^ckeditor/', include("ckeditor_uploader.urls")),
     url(r'^user/', include('user.urls', namespace="user")),  # 用户模块

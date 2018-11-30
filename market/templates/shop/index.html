@@ -79,7 +79,7 @@
         </li>
         <li>
             <div class="am-gallery-item">
-                <a href="{% url 'shop:超市' %}" class="">
+                <a href="{% url 'shop:超市' 0 0 %}" class="">
                     <img src="{% static 'images/icon5.png' %}"/>
                     <p>超市</p>
                 </a>
@@ -154,7 +154,7 @@
                 </a>
             </li>
             <li>
-                <a href="shopcart.html" class="">
+                <a href="{% url 'car:购物车界面' %}" class="">
                     <span class="am-icon-shopping-cart"></span>
                     <span class="am-navbar-label">购物车</span>
                 </a>
@@ -180,7 +180,7 @@
 {% block foot_js %}
     <script type='text/javascript'>
         (function () {
-            new PopUp_api({el: '.index-qd', html: '.qd-box'});
+            // new PopUp_api({el: '.index-qd', html: '.qd-box'});
         })()
     </script>
 
