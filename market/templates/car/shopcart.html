@@ -19,38 +19,41 @@
         <p>亲、您的购物车还是空空的哦，快去装满它!</p>
         <a href="{% url 'shop:商城主页' %}" class="goshopping">前去逛逛</a>
     </div>
-    <ul class="shopcart-list">
-        {% for sku in skus %}
-            <li>
-                <label class="am-checkbox am-warning">
-                    <input type="checkbox" checked="checked" value="" data-am-ucheck checked>
-                </label>
-                <a href="{% url 'shop:商品详情' sku.pk %}"><img src="{{ MEDIA_URL }}{{ sku.sku_address }}"
-                                                            class="shop-pic"/></a>
-                <div class="shop-list-mid">
-                    <div class="tit"><a
-                            href="{% url 'shop:商品详情' sku.pk %}">{{ sku.spu_id.spu_name }}&emsp;{{ sku.sku_name }}</a>
+    <form class="cart" action="{% url 'order:确认订单' %}" method="get">
+        <ul class="shopcart-list">
+            {% for sku in skus %}
+                <li>
+                    <label class="am-checkbox am-warning">
+                        <input type="checkbox" name="sku_id" checked="checked" value="{{ sku.pk }}" data-am-ucheck
+                               checked>
+                    </label>
+                    <a href="{% url 'shop:商品详情' sku.pk %}"><img src="{{ MEDIA_URL }}{{ sku.sku_address }}"
+                                                                class="shop-pic"/></a>
+                    <div class="shop-list-mid">
+                        <div class="tit"><a
+                                href="{% url 'shop:商品详情' sku.pk %}">{{ sku.spu_id.spu_name }}&emsp;{{ sku.sku_name }}</a>
+                        </div>
+                        <b class="shop-list-price">￥<span class="price">{{ sku.sku_price }} </span></b>
                     </div>
-                    <b class="shop-list-price">￥<span class="price">{{ sku.sku_price }} </span></b>
-                </div>
-                <div class="list-cart1">
-                    <div class="d-stock">
-                        <a class="decrease">-</a>
-                        <input sku_id="{{ sku.pk }}" readonly="" class="text_box num" name="" type="text"
-                               value="{{ sku.count }}">
-                        <a class="increase">+</a>
+                    <div class="list-cart1">
+                        <div class="d-stock">
+                            <a class="decrease">-</a>
+                            <input sku_id="{{ sku.pk }}" readonly="" class="text_box num" name="" type="text"
+                                   value="{{ sku.count }}">
+                            <a class="increase">+</a>
+                        </div>
                     </div>
-                </div>
-            </li>
-        {% endfor %}
-        <div style="height: 10px; background: #eee;"></div>
-    </ul>
+                </li>
+            {% endfor %}
+            <div style="height: 10px; background: #eee;"></div>
+        </ul>
+    </form>
     <div class="shop-fix">
         <label class="am-checkbox am-warning">
             <input class="check_all" type="checkbox" checked="checked" value="" data-am-ucheck checked>
         </label>
         <a class="del">全选</a>
-        <a href="{% url 'order:确认订单' %}" class="js-btn">去结算</a>
+        <a href="javascript:;" class="js-btn">去结算</a>
         <div class="js-text">
             <P>合计：<b class="allprice">￥00.00</b></P>
             <p class="js-car">免费配送</p>
@@ -217,6 +220,18 @@
 
             // 调用计算价格
             allprice()
+            
+            // 提交表单数据
+            $(".js-btn").on("click",function () {
+                // console.debug(11);
+                // 判断购物车中是否有商品
+                if($(".shopcart-list").find(":checked").length>0){
+                    // 提交
+                    $(".cart").submit();
+                }else {
+                    alert("请选择订单商品");
+                }
+            })
         })
     </script>
     <script src="{% static 'js/jquery.min.js' %}"></script>

@@ -12,40 +12,64 @@
             <a href="" class="">确认订单</a>
         </h1>
     </header>
-    <div style="height: 49px;"></div>
-    <div class="add-address">
-        <a href="address.html">+新建收货地址</a>
-        <i class="am-icon-angle-right"></i>
-    </div>
-    <div style="background: #eee; height: 10px;"></div>
-    <ul class="shopcart-list" style="padding-bottom: 0;">
-        <li>
-            <img src="{% static 'images/test3.png' %}" class="shop-pic"/>
-            <div class="order-mid">
-                <div class="tit">法国加力果12个装 进口新鲜水果 嘎啦苹果 包邮</div>
-                <div class="order-price">￥169 <i>X2</i></div>
+    <form action="{% url 'order:确认支付' %}" method="post" id="order_form">
+        <div style="height: 49px;"></div>
+        {% csrf_token %}
+        {% if address %}
+            <ul>
+                <input type="hidden" name="address_id" value="{{ address.pk }}">
+                <li>
+                    <p>收货人：{{ address.username }}&nbsp;&nbsp;{{ address.telephone }}</p>
+                    <p>收货地址：{{ address.hcity }}{{ address.hproper }}{{ address.harea }}{{ address.detail }}</p>
+                    <hr/>
+                </li>
+            </ul>
+        {% else %}
+            <div class="add-address">
+                <a href="address.html">+新建收货地址</a>
+                <i class="am-icon-angle-right"></i>
             </div>
-        </li>
-    </ul>
-    <ul class="order-infor">
-        <li class="order-infor-first">
-            <span>商品总计：</span>
-            <i>￥88.00</i>
-        </li>
-        <li class="order-infor-first">
-            <span>运费：</span>
-            <i>包邮</i>
-        </li>
-    </ul>
+        {% endif %}
+        <div style="background: #eee; height: 10px;"></div>
+        <ul class="shopcart-list" style="padding-bottom: 0;">
+            {% for sku in skus %}
+                <li>
+                    <input type="hidden" name="sku_id" value="{{ sku.id }}">
+                    <img src="{{ MEDIA_URL }}{{ sku.sku_address }}" class="shop-pic"/>
+                    <div class="order-mid">
+                        <div class="tit">{{ sku.spu_id.spu_name }}&emsp;{{ sku.sku_name }}</div>
+                        <div class="order-price">￥{{ sku.sku_price }} <i>X{{ sku.count }}</i></div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        <ul class="order-infor">
+            <li class="order-infor-first">
+                <span>商品总计：</span>
+                <i>￥<span id="goods_price">{{ total_price }}</span></i>
+            </li>
+            <li class="order-infor-first">
+                <span>运输方式：</span>
+                <i>
+                    <select name="transport" id="transport">
+                        {% for tran in transport %}
+                            <option value="{{ tran.pk }}"
+                                    price="{{ tran.tran_price }}">{{ tran.tran_name }}-￥{{ tran.tran_price }}</option>
+                        {% endfor %}
+                    </select>
+                </i>
+            </li>
+        </ul>
+    </form>
     <div style="background: #eee; height: 10px;"></div>
     <textarea placeholder="备注说明" class="bz-infor"></textarea>
     <div style="background: #eee; height: 10px;"></div>
     <div style="height: 55px;"></div>
     <div class="shop-fix">
         <div class="order-text">
-            应付总额：<span>￥188</span>
+            应付总额：<span>￥<span id="sum_price">00.00</span></span>
         </div>
-        <a href="{% url 'order:确认支付' %}" class="js-btn">提交订单</a>
+        <a href="javascript:;" class="js-btn">提交订单</a>
     </div>
 {% endblock %}
 
@@ -96,6 +120,47 @@
 {% block foot_js %}
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/amazeui.min.js' %}"></script>
+    <script>
+        $(function () {
+            // 计算总价格
+            function total_price() {
+                var goods_prcie = $("#goods_price").text();
+                var tran_sprice = $("#transport").find(":selected").attr("price");
+                // js中 也具有字符串相加
+                var total = parseFloat(goods_prcie) + parseFloat(tran_sprice);
+                $("#sum_price").text(total);
+            }
+
+            // 调用
+            total_price();
+
+            // 运输方式改变,需重新计算价格
+            $("#transport").on("change", function () {
+                total_price();
+            })
+
+            // 确认订单绑定点击事件,通过ajax提交订单数据
+            $(".js-btn").on("click",function () {
+                // console.debug(11);
+                var data = $("#order_form").serialize();
+                // 发送ajax请求
+                $.ajax({
+                    type:'POST',
+                    url:"",
+                    data:data,
+                    dataType:"json",
+                    success:function (data) {
+                        // console.debug(data);
+                        if(data.name==0){
+                            location.href = "{% url 'order:确认支付' %}?order_sn="+data.order_sn;
+                        }else {
+                            console.debug(data.name)
+                        }
+                    }
+                })
+            })
+        })
+    </script>
 {% endblock %}
  
  

@@ -164,7 +164,7 @@ def verification_code(request):
             # 成功,让阿里发送短信提示
             # __business_id = uuid.uuid1()
             # # 信息
-            # params = "{\"code\":\"%s\",\"product\":\"王凯专属服务\"}" % random_code
+            # params = "{\"code\":\"%s\",\"product\":\"kkw的电商超市\"}" % random_code
             # send_sms(__business_id, telephone, "注册验证", "SMS_2245271", params)
 
             return JsonResponse({"ok": 0})

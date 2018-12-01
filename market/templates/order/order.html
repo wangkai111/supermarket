@@ -16,51 +16,69 @@
     <h5 class="order-tit">收货人信息</h5>
     <div class="order-name">
         <a href="gladdress.html">
-            <p class="order-tele">宋科&nbsp;&nbsp;&nbsp;15180163170</p>
-            <p class="order-add">江西省南昌市 青云谱区解放西路258号</p>
+            <p class="order-tele">{{ order.username }}&nbsp;&nbsp;&nbsp;{{ order.telephone }}</p>
+            <p class="order-add">{{ order.address }}</p>
         </a>
-        <i class="am-icon-angle-right"></i>
     </div>
     <div style="background: #eee; height: 10px;"></div>
     <h5 class="order-tit">确认订单信息</h5>
     <ul class="shopcart-list" style="padding-bottom: 0; margin-top: 0;">
-        <li>
-            <img src="{% static 'images/test3.png' %}" class="shop-pic"/>
-            <div class="order-mid">
-                <div class="tit">法国加力果12个装 进口新鲜水果 嘎啦苹果 包邮</div>
-                <div class="order-price">￥169 <i>X2</i></div>
-            </div>
-        </li>
+        {% for o in order.ordergoods_set.all %}
+            <li>
+                <img src="{{ MEDIA_URL }}{{ o.goods_sku.sku_address }}" class="shop-pic"/>
+                <div class="order-mid">
+                    <div class="tit">{{ o.goods_sku.spu_id.spu_name }}{{ o.goods_sku.sku_name }}</div>
+                    <div class="order-price">￥{{ o.price }}<i>X{{ o.count }}</i></div>
+                </div>
+            </li>
+        {% endfor %}
     </ul>
     <ul class="order-infor">
         <li class="order-infor-first">
             <span>商品总计：</span>
-            <i>￥88.00</i>
+            <i>￥{{ order.order_amount }}</i>
         </li>
         <li class="order-infor-first">
-            <span>运费：</span>
-            <i>包邮</i>
-        </li>
-        <li class="order-infor-first">
-            <a href="integral.html">积分抵费></a>
-        </li>
-        <li class="order-infor-first">
-            <a href="yhq.html">选择优惠券></a>
+            <span>运输方式：{{ order.transport }}</span>
+            <i>{{ order.transport_price }}</i>
         </li>
     </ul>
     <!--<div style="background: #eee; height: 10px;"></div>
 
     <input id="beginTime" class="select-time" placeholder="请选择配送时间 >" /></div>
     <div id="datePlugin"></div>-->
+    <ul class="pay-style">
+        <li>
+            <img src="{% static 'images/zhi.png' %}" width="50"/>
+            <span>
+		   	 		<p>支付宝</p>
+		   	 		<p class="descript">推荐有支付宝账号的用户使用</p>
+		   	 	</span>
+            <label class="am-radio-inline">
+                <input type="radio" checked="checked" name="radio10" value="1" data-am-ucheck>
+            </label>
+        </li>
+        <li>
+            <img src="{% static 'images/wei.png' %}" width="50"/>
+            <span>
+		   	 		<p>微信支付</p>
+		   	 		<p class="descript">推荐安装微信5.0及以上版本的使用</p>
+		   	 	</span>
+            <label class="am-radio-inline">
+                <input type="radio" name="radio10" value="1" data-am-ucheck>
+            </label>
+        </li>
+
+    </ul>
     <div style="background: #eee; height: 10px;"></div>
     <textarea placeholder="备注说明" class="bz-infor"></textarea>
     <div style="background: #eee; height: 10px;"></div>
     <div style="height: 55px;"></div>
     <div class="shop-fix">
         <div class="order-text">
-            应付总额：<span>￥188</span>
+            应付总额：<span>￥{{ total_price }}</span>
         </div>
-        <a href="pay.html" class="js-btn">提交订单</a>
+        <a href="{% url 'order:发起支付' %}?order_sn={{ order.order_sn }}" class="js-btn">提交订单</a>
     </div>
 {% endblock %}
 

@@ -8,12 +8,12 @@
         <div class="am-header-left am-header-nav">
             <a href="{% url 'shop:所在城市' %}" class="" style="color: #fff;">
                 <img src="{% static 'images/city.png' %}"/>
-                <p style="font-size: 12px; margin-top: -35px;">南昌</p>
+                <p style="font-size: 12px; margin-top: -35px;">成都</p>
             </a>
         </div>
         <h1 class="am-header-title1">
             <div class="search-box">
-                <a href="{% url 'shop:所在学校' %}" class="index-search">南昌大学前湖校区∨</a>
+                <a href="{% url 'shop:所在学校' %}" class="index-search">成都天府新谷源码时代∨</a>
                 <!--  <input type="submit" value="" class="search-icon" /> -->
             </div>
         </h1>
@@ -28,7 +28,7 @@
     <div class="am-slider am-slider-default" data-am-flexslider id="demo-slider-0">
         <ul class="am-slides">
             {% for lun in luns %}
-                <li><a href="{% url 'shop:商品详情' lun.sku_id.pk %}"><img style="width:70%" src="
+                <li><a href="{% url 'shop:商品详情' lun.sku_id.pk %}"><img style="" src="
                         {{ MEDIA_URL }}{{ lun.image_address }}"/></a></li>
             {% endfor %}
         </ul>
