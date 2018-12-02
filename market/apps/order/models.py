@@ -65,6 +65,7 @@ class Order(BaseModel):
 
 
 class OrderGoods(BaseModel):
+    """订单商品表"""
     order = models.ForeignKey(to="Order", verbose_name='订单id')
     goods_sku = models.ForeignKey(to="shop.Shop_SKU", verbose_name="订单商品SKUID")
     count = models.IntegerField(verbose_name="订单商品数量")

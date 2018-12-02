@@ -182,7 +182,7 @@
                 var status = $(this).prop("checked");
                 // console.debug(status);
                 // 修改商品列表中复选框的状态,:checkbox 获取全部复选框
-                $(".shopcart-list").find(":checkbox").prop("checked", status)
+                $(".shopcart-list").find(":checkbox").prop("checked", status);
                 // 调用计算价格
                 allprice();
             });
@@ -219,7 +219,7 @@
             }
 
             // 调用计算价格
-            allprice()
+            allprice();
             
             // 提交表单数据
             $(".js-btn").on("click",function () {
