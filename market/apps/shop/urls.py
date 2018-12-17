@@ -1,10 +1,11 @@
 from django.conf.urls import url
+from django.views.decorators.cache import cache_page
 
 from shop.views import shop_index, shop_city, shop_village, shop_tidings, shop_recharge, shop_yhq, shop_ygq, shop_speed, \
     shop_list, shop_detail, shop_category
 
 urlpatterns = [
-    url(r'^$',shop_index,name='商城主页'),
+    url(r'^$',cache_page(3600)(shop_index),name='商城主页'),
     url(r'^shop_city/$',shop_city,name='所在城市'),
     url(r'^shop_village/$',shop_village,name='所在学校'),
     url(r'^shop_tidings/$',shop_tidings,name='消息中心'),

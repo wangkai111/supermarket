@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 SECRET_KEY = '&ba#c5bldpq*zse$7o-)fq#u%ab55&!8-m&49u&b!4qk524f8a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -129,7 +129,8 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
+# STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
@@ -156,7 +157,7 @@ ACCESS_KEY_ID = "LTAI2qSiJdWP87em"
 ACCESS_KEY_SECRET = "FzORQ587PgGBoOAdmxzCjaxQi8klUi"
 
 # 目的是分配一个资源URL
-MEDIA_URL = "/static/media/"
+# MEDIA_URL = "/static/media/"
 
 # 配置该URL对应的物理目录存储地址
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
@@ -184,3 +185,22 @@ HAYSTACK_CONNECTIONS = {
 }
 # 当添加、修改、删除数据时，自动生成索引
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+
+# 七牛云密钥等配置
+QINIU_ACCESS_KEY = 'GH3Ux9TYY0NRdn1KYd2cjr3J7E-TE49GlrqG2-Wn'
+QINIU_SECRET_KEY = 'diD4dNngDfcFStS24RcbgyI92wbo9lz1NdsyZkFJ'
+QINIU_BUCKET_NAME = 'market'
+QINIU_BUCKET_DOMAIN = 'www.wk888.online/'
+QINIU_SECURE_URL = False      #使用http
+PREFIX_URL = 'http://'
+
+# 上传文件地址配置
+MEDIA_URL = PREFIX_URL + QINIU_BUCKET_DOMAIN + "/"
+# 上传文件的存储引擎配置
+DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
+
+# 静态文件的url配置
+STATIC_URL = QINIU_BUCKET_DOMAIN + '/static/'
+# 静态文件的存储引擎
+STATICFILES_STORAGE = 'qiniustorage.backends.QiniuStaticStorage'

@@ -106,6 +106,7 @@ class Lunbo(BaseModel):
 
     class Meta:
         verbose_name = "首页轮播商品"
+
         verbose_name_plural = verbose_name
 
 
